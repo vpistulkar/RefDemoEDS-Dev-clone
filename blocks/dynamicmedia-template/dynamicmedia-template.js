@@ -12,7 +12,7 @@ export default async function decorate(block) {
   
   let configSrc = Array.from(block.children)[0]?.textContent?.trim(); //inline or cf
 
-  
+  //fallback default to inline mode
   if(configSrc === 'inline' || !configSrc){
     // Get DM Url input
     let templateURL = inputs[1]?.textContent?.trim();
