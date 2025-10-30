@@ -3,7 +3,7 @@
 This repository includes **two workflows** for syncing with the main template repository (`AEMXSC/RefDemoEDS`):
 
 ## 🔄 Workflow 1: Sync with Template (Create PR for Review)
-**File:** `sync-template.yml`
+**File:** `sync-template-using-pr.yml`
 
 Creates a **Pull Request** with template changes for review before merging.
 
@@ -52,7 +52,7 @@ Creates a **Pull Request** with template changes for review before merging.
 This workflow is pre-configured to sync with the main template repository:
 
 ```yaml
-git remote add template https://github.dev/AEMXSC/RefDemoEDS.git
+git remote add template https://github.com/AEMXSC/RefDemoEDS-Dev.git
 ```
 
 If you created this repository using "Use this template" from `AEMXSC/RefDemoEDS`, no configuration changes are needed.
