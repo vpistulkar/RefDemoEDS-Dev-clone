@@ -33,9 +33,9 @@
   --link-hover-color: var(--brand-link-hover-color, #F97316);
   --main-accent-color: var(--brand-theme-color, #FB923C);
 
-
   --dark-color-opacity: rgba(0, 0, 0, 0.55);
   --light-color-opacity: rgba(255, 255, 255, 0.5);
+  --tab-background-color: rgba(0, 0, 0, 0.02);
 
   /* brand-scoped header/footer variables with sensible defaults */
   --nav-background-color: var(--brand-nav-background-color, #0000008c);
