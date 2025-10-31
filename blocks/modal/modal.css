@@ -55,8 +55,7 @@ body.modal-open {
 }
 
 .modal .close-button .icon.icon-close {
-  position: relative;
-  display: block;
+  content: '';
   width: 24px;
   height: 24px;
 }

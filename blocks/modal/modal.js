@@ -9,34 +9,6 @@ import {
   Other blocks can also use the createModal() and openModal() functions.
 */
 
-export default async function decorate(block) {
-  // Get the link and linkText from block children
-  const [linkElement, textElement] = block.children;
-  const modalUrl = linkElement?.textContent?.trim();
-  const linkText = textElement?.textContent?.trim() || 'Open Modal';
-
-  if (!modalUrl) {
-    console.warn('Modal block: No URL provided');
-    block.innerHTML = '';
-    return;
-  }
-
-  // Create a link that opens the modal
-  const link = document.createElement('a');
-  link.href = modalUrl;
-  link.textContent = linkText;
-  link.classList.add('button');
-
-  link.addEventListener('click', async (e) => {
-    e.preventDefault();
-    await openModal(modalUrl);
-  });
-
-  // Replace block content with the link
-  block.innerHTML = '';
-  block.append(link);
-}
-
 export async function createModal(contentNodes) {
   await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
   const dialog = document.createElement('dialog');
