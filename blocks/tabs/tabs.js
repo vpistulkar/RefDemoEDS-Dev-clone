@@ -7,21 +7,11 @@ let tabBlockCnt = 0;
 export default async function decorate(block) {
   // Get the tabs style from data-aue-prop
   const tabsStyleParagraph = block.querySelector('p[data-aue-prop="tabsstyle"]');
-  // Find the direct child div that contains this paragraph
-  let tabsStyleDiv = null;
-  if (tabsStyleParagraph) {
-    tabsStyleDiv = [...block.children].find(child => child.contains(tabsStyleParagraph));
-  }
   const tabsStyle = tabsStyleParagraph?.textContent?.trim() || '';
   
   // Add the style class to block
   if (tabsStyle && tabsStyle !== 'default' && tabsStyle !== '') {
     block.classList.add(tabsStyle);
-  }
-  
-  // Hide and exclude the style configuration div from being treated as a tab
-  if (tabsStyleDiv) {
-    tabsStyleDiv.style.display = 'none';
   }
   
   // Check if card-style-tab variant is requested
@@ -37,8 +27,13 @@ export default async function decorate(block) {
   // Exclude the style variant div from being treated as a tab
   const tabItems = [...block.children]
     .filter((child) => {
-      // Skip the style variant div
-      if (child === tabsStyleDiv) return false;
+      // Skip divs that contain p[data-aue-prop="tabsstyle"]
+      const hasTabsStyleProp = child.querySelector('p[data-aue-prop="tabsstyle"]');
+      if (hasTabsStyleProp) {
+        // Hide it
+        child.style.display = 'none';
+        return false;
+      }
       // Must have a firstElementChild with children
       return child && child.firstElementChild && child.firstElementChild.children.length > 0;
     })
