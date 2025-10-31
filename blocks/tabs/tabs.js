@@ -42,6 +42,11 @@ export default async function decorate(block) {
       tabpanel: child,
       heading: child.firstElementChild,
     }));
+  
+  // Debug: Log if tabsStyleDiv is not found but style text exists
+  if (tabsStyle && !tabsStyleDiv) {
+    console.warn('Tabs: Style variant text found but div not found. All children:', [...block.children].map(c => c.innerHTML.substring(0, 50)));
+  }
 
   tabItems.forEach((item, i) => {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
