@@ -854,6 +854,21 @@
     ]
   },
   {
+    "id": "modal",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Link"
+      },
+      {
+        "component": "text",
+        "name": "linkText",
+        "label": "Text"
+      }
+    ]
+  },
+  {
     "id": "quote",
     "fields": [
       {
