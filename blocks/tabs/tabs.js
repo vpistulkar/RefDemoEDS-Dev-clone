@@ -7,7 +7,11 @@ let tabBlockCnt = 0;
 export default async function decorate(block) {
   // Get the tabs style from data-aue-prop
   const tabsStyleParagraph = block.querySelector('p[data-aue-prop="tabsstyle"]');
-  const tabsStyleDiv = tabsStyleParagraph?.closest('div');
+  // Find the direct child div that contains this paragraph
+  let tabsStyleDiv = null;
+  if (tabsStyleParagraph) {
+    tabsStyleDiv = [...block.children].find(child => child.contains(tabsStyleParagraph));
+  }
   const tabsStyle = tabsStyleParagraph?.textContent?.trim() || '';
   
   // Add the style class to block
@@ -42,11 +46,6 @@ export default async function decorate(block) {
       tabpanel: child,
       heading: child.firstElementChild,
     }));
-  
-  // Debug: Log if tabsStyleDiv is not found but style text exists
-  if (tabsStyle && !tabsStyleDiv) {
-    console.warn('Tabs: Style variant text found but div not found. All children:', [...block.children].map(c => c.innerHTML.substring(0, 50)));
-  }
 
   tabItems.forEach((item, i) => {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
