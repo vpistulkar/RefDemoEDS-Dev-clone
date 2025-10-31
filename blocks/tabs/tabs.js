@@ -21,7 +21,7 @@ export default async function decorate(block) {
 
     // decorate tabpanel
     const tabpanel = block.children[i];
-    tabpanel.className = 'tabs-panel';
+    tabpanel.classList.add('tabs-panel');
     tabpanel.id = id;
     tabpanel.setAttribute('aria-hidden', !!i);
     tabpanel.setAttribute('aria-labelledby', `tab-${id}`);
