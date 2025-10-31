@@ -5,6 +5,9 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 let tabBlockCnt = 0;
 
 export default async function decorate(block) {
+  // Check if card-style-tab variant is requested
+  const cardStyleVariant = block.classList.contains('card-style-tab');
+  
   // build tablist
   const tablist = document.createElement('div');
   tablist.className = 'tabs-list';
@@ -21,6 +24,38 @@ export default async function decorate(block) {
 
     // decorate tabpanel
     const tabpanel = block.children[i];
+    
+    // For card-style-tab variant, reorganize content first
+    if (cardStyleVariant) {
+      // Find image and text content
+      const picture = tabpanel.querySelector('picture');
+      const allChildren = [...tabpanel.children];
+      
+      if (picture) {
+        // Create wrapper for image
+        const imageWrapper = document.createElement('div');
+        imageWrapper.className = 'tabs-panel-image';
+        picture.parentNode.replaceChild(imageWrapper, picture);
+        imageWrapper.appendChild(picture);
+        
+        // Create wrapper for content
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'tabs-panel-content';
+        
+        // Move remaining children to content wrapper
+        allChildren.forEach((child) => {
+          if (child !== imageWrapper) {
+            contentWrapper.appendChild(child);
+          }
+        });
+        
+        // Clear tabpanel and add wrappers
+        tabpanel.innerHTML = '';
+        tabpanel.appendChild(imageWrapper);
+        tabpanel.appendChild(contentWrapper);
+      }
+    }
+    
     tabpanel.className = 'tabs-panel';
     tabpanel.id = id;
     tabpanel.setAttribute('aria-hidden', !!i);
