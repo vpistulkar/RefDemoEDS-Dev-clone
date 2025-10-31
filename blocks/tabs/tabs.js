@@ -7,6 +7,7 @@ let tabBlockCnt = 0;
 export default async function decorate(block) {
   // Get the tabs style from data-aue-prop
   const tabsStyleParagraph = block.querySelector('p[data-aue-prop="tabsstyle"]');
+  const tabsStyleDiv = tabsStyleParagraph?.closest('div');
   const tabsStyle = tabsStyleParagraph?.textContent?.trim() || '';
   
   // Add the style class to block
@@ -14,9 +15,9 @@ export default async function decorate(block) {
     block.classList.add(tabsStyle);
   }
   
-  // Hide the style configuration paragraph
-  if (tabsStyleParagraph) {
-    tabsStyleParagraph.style.display = 'none';
+  // Hide and exclude the style configuration div from being treated as a tab
+  if (tabsStyleDiv) {
+    tabsStyleDiv.style.display = 'none';
   }
   
   // Check if card-style-tab variant is requested
@@ -29,39 +30,55 @@ export default async function decorate(block) {
   tablist.id = `tablist-${tabBlockCnt += 1}`;
 
   // the first cell of each row is the title of the tab
-  const tabHeadings = [...block.children]
-    .filter((child) => child && child.firstElementChild && child.firstElementChild.children.length > 0)
-    .map((child) => child.firstElementChild);
+  // Exclude the style variant div from being treated as a tab
+  const tabItems = [...block.children]
+    .filter((child) => {
+      // Skip the style variant div
+      if (child === tabsStyleDiv) return false;
+      // Must have a firstElementChild with children
+      return child && child.firstElementChild && child.firstElementChild.children.length > 0;
+    })
+    .map((child) => ({
+      tabpanel: child,
+      heading: child.firstElementChild,
+    }));
 
-  tabHeadings.forEach((tab, i) => {
+  tabItems.forEach((item, i) => {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
-
-    // decorate tabpanel
-    const tabpanel = block.children[i];
+    const { tabpanel, heading: tab } = item;
     
     // For card-style-tab variant, reorganize content first
     if (cardStyleVariant) {
       // Find image and text content
       const picture = tabpanel.querySelector('picture');
-      const allChildren = [...tabpanel.children];
       
       if (picture) {
         // Create wrapper for image
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'tabs-panel-image';
-        picture.parentNode.replaceChild(imageWrapper, picture);
-        imageWrapper.appendChild(picture);
+        
+        // Extract picture - handle if it's wrapped in a p tag
+        const pictureParent = picture.parentElement;
+        let pictureElement;
+        if (pictureParent && pictureParent.tagName === 'P') {
+          // Extract the p tag containing picture
+          pictureElement = pictureParent;
+        } else {
+          // Picture is direct child or in other structure
+          pictureElement = picture;
+        }
+        
+        // Move picture element to image wrapper
+        imageWrapper.appendChild(pictureElement);
         
         // Create wrapper for content
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'tabs-panel-content';
         
-        // Move remaining children to content wrapper
-        allChildren.forEach((child) => {
-          if (child !== imageWrapper) {
-            contentWrapper.appendChild(child);
-          }
-        });
+        // Move all remaining children to content wrapper
+        while (tabpanel.firstChild) {
+          contentWrapper.appendChild(tabpanel.firstChild);
+        }
         
         // Clear tabpanel and add wrappers
         tabpanel.innerHTML = '';
