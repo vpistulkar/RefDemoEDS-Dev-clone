@@ -5,6 +5,20 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 let tabBlockCnt = 0;
 
 export default async function decorate(block) {
+  // Get the tabs style from data-aue-prop
+  const tabsStyleParagraph = block.querySelector('p[data-aue-prop="tabsstyle"]');
+  const tabsStyle = tabsStyleParagraph?.textContent?.trim() || '';
+  
+  // Add the style class to block
+  if (tabsStyle && tabsStyle !== 'default' && tabsStyle !== '') {
+    block.classList.add(tabsStyle);
+  }
+  
+  // Hide the style configuration paragraph
+  if (tabsStyleParagraph) {
+    tabsStyleParagraph.style.display = 'none';
+  }
+  
   // Check if card-style-tab variant is requested
   const cardStyleVariant = block.classList.contains('card-style-tab');
   
