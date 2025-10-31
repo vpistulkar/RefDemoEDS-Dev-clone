@@ -55,7 +55,8 @@ body.modal-open {
 }
 
 .modal .close-button .icon.icon-close {
-  content: '';
+  position: relative;
+  display: block;
   width: 24px;
   height: 24px;
 }
@@ -76,7 +77,7 @@ body.modal-open {
 }
 
 .modal .close-button .icon.icon-close::after {
-  transform: translate(-50%, -50%) rotate(-45deg)
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .modal dialog .section {
