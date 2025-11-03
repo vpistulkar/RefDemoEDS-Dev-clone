@@ -34,15 +34,18 @@ export default async function decorate(block) {
   tablist.id = `tablist-${tabBlockCnt += 1}`;
 
   // the first cell of each row is the title of the tab
-  // Exclude the style variant div from being treated as a tab
-  const tabItems = [...block.children]
-    .filter((child) => (
-      child && child.firstElementChild
-    ))
-    .map((child) => ({
-      tabpanel: child,
-      heading: child.firstElementChild,
-    }));
+  // Build tab items, skipping children without a valid title
+  const tabItems = [];
+  [...block.children].forEach((child) => {
+    if (!child || !child.firstElementChild) return;
+    // ignore any container that is just the style selector (already removed earlier)
+    if (child.querySelector && child.querySelector('p[data-aue-prop="tabsstyle"]')) return;
+    const heading = child.firstElementChild;
+    const explicitTitle = child.querySelector && child.querySelector('p[data-aue-prop="title"]');
+    const labelText = (explicitTitle?.textContent || heading?.textContent || '').trim();
+    if (!labelText) return; // skip items with empty labels to avoid blank tabs
+    tabItems.push({ tabpanel: child, heading });
+  });
 
   tabItems.forEach((item, i) => {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
