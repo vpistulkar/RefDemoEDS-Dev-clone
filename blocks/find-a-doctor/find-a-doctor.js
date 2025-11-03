@@ -442,7 +442,7 @@ async function fetchFromContentFragmentFolder(folderPath) {
           body: JSON.stringify({
             graphQLPath: `${aempublishurl}${GRAPHQL_DOCTORS_BY_FOLDER_QUERY}`,
             cfpath: decodedFolderPath,
-            variation: "main"
+            variation: `main;ts=${Date.now()}`
           })
         };
 
