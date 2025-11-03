@@ -19,6 +19,11 @@ export default async function decorate(block) {
     .filter((child) => child.querySelector('p[data-aue-prop="tabsstyle"]'))
     .forEach((cfg) => cfg.remove());
 
+  // Remove any stray top-level title nodes that UE may render under Tabs root
+  [...block.children]
+    .filter((child) => child.matches && child.matches('p[data-aue-prop="title"]'))
+    .forEach((titleNode) => titleNode.remove());
+
   // Check if card-style-tab variant is requested
   const cardStyleVariant = block.classList.contains('card-style-tab');
   
