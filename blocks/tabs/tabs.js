@@ -14,10 +14,20 @@ export default async function decorate(block) {
     block.classList.add(tabsStyle);
   }
   
-  // Proactively remove any style-config containers so they don't become tabs in AEM
-  [...block.children]
-    .filter((child) => child.querySelector('p[data-aue-prop="tabsstyle"]'))
-    .forEach((cfg) => cfg.remove());
+  // Proactively remove any style-config node so it doesn't become a tab (UE/Live)
+  const styleNodes = block.querySelectorAll('p[data-aue-prop="tabsstyle"]');
+  styleNodes.forEach((node) => {
+    // find the nearest direct child of the block that contains this node
+    let container = node;
+    while (container && container.parentElement !== block) {
+      container = container.parentElement;
+    }
+    if (container && container.parentElement === block) {
+      container.remove();
+    } else {
+      node.remove();
+    }
+  });
 
   // Remove any stray top-level title nodes that UE may render under Tabs root
   [...block.children]
@@ -45,6 +55,15 @@ export default async function decorate(block) {
     const labelText = (explicitTitle?.textContent || heading?.textContent || '').trim();
     if (!labelText) return; // skip items with empty labels to avoid blank tabs
     tabItems.push({ tabpanel: child, heading });
+  });
+
+  // Hide any other stray authoring nodes at the root level that are not tab items
+  const allowedChildren = new Set(tabItems.map((i) => i.tabpanel));
+  [...block.children].forEach((child) => {
+    if (!allowedChildren.has(child)) {
+      // Hide rather than remove to avoid interfering with UE selection
+      child.style.display = 'none';
+    }
   });
 
   tabItems.forEach((item, i) => {
