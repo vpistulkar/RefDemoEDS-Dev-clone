@@ -100,6 +100,11 @@
   min-height: 400px;
 }
 
+/* Ensure hidden panels remain hidden for card-style variant */
+.tabs.card-style-tab .tabs-panel[aria-hidden='true'] {
+  display: none !important;
+}
+
 .tabs.card-style-tab .tabs-panel .tabs-panel-image,
 .tabs.card-style-tab .tabs-panel picture {
   flex: 0 0 50%;
