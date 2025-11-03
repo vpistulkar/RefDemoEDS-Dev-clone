@@ -441,7 +441,7 @@ async function fetchFromContentFragmentFolder(folderPath) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             graphQLPath: `${aempublishurl}${GRAPHQL_DOCTORS_BY_FOLDER_QUERY}`,
-            cfpath: decodedFolderPath,
+            cfPath: decodedFolderPath,
             variation: `main;ts=${Date.now()}`
           })
         };
