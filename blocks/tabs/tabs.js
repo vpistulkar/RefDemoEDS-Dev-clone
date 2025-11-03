@@ -14,6 +14,11 @@ export default async function decorate(block) {
     block.classList.add(tabsStyle);
   }
   
+  // Proactively remove any style-config containers so they don't become tabs in AEM
+  [...block.children]
+    .filter((child) => child.querySelector('p[data-aue-prop="tabsstyle"]'))
+    .forEach((cfg) => cfg.remove());
+
   // Check if card-style-tab variant is requested
   const cardStyleVariant = block.classList.contains('card-style-tab');
   
@@ -26,17 +31,9 @@ export default async function decorate(block) {
   // the first cell of each row is the title of the tab
   // Exclude the style variant div from being treated as a tab
   const tabItems = [...block.children]
-    .filter((child) => {
-      // Skip divs that contain p[data-aue-prop="tabsstyle"]
-      const hasTabsStyleProp = child.querySelector('p[data-aue-prop="tabsstyle"]');
-      if (hasTabsStyleProp) {
-        // Hide it
-        child.style.display = 'none';
-        return false;
-      }
-      // Must have a firstElementChild with children
-      return child && child.firstElementChild && child.firstElementChild.children.length > 0;
-    })
+    .filter((child) => (
+      child && child.firstElementChild && child.firstElementChild.children.length > 0
+    ))
     .map((child) => ({
       tabpanel: child,
       heading: child.firstElementChild,
@@ -46,44 +43,45 @@ export default async function decorate(block) {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
     const { tabpanel, heading: tab } = item;
     
+    // Store heading content before any DOM manipulation
+    const headingContent = tab.innerHTML;
+    
     // For card-style-tab variant, reorganize content first
     if (cardStyleVariant) {
-      // Find image and text content
+      // Create wrapper for content (always)
+      const contentWrapper = document.createElement('div');
+      contentWrapper.className = 'tabs-panel-content';
+
+      // Optional image wrapper if a picture is present
       const picture = tabpanel.querySelector('picture');
-      
+      let imageWrapper = null;
       if (picture) {
-        // Create wrapper for image
-        const imageWrapper = document.createElement('div');
+        imageWrapper = document.createElement('div');
         imageWrapper.className = 'tabs-panel-image';
-        
+
         // Extract picture - handle if it's wrapped in a p tag
         const pictureParent = picture.parentElement;
-        let pictureElement;
-        if (pictureParent && pictureParent.tagName === 'P') {
-          // Extract the p tag containing picture
-          pictureElement = pictureParent;
-        } else {
-          // Picture is direct child or in other structure
-          pictureElement = picture;
-        }
-        
-        // Move picture element to image wrapper
+        const pictureElement = (pictureParent && pictureParent.tagName === 'P') ? pictureParent : picture;
         imageWrapper.appendChild(pictureElement);
-        
-        // Create wrapper for content
-        const contentWrapper = document.createElement('div');
-        contentWrapper.className = 'tabs-panel-content';
-        
-        // Move all remaining children to content wrapper
-        while (tabpanel.firstChild) {
-          contentWrapper.appendChild(tabpanel.firstChild);
-        }
-        
-        // Clear tabpanel and add wrappers
-        tabpanel.innerHTML = '';
-        tabpanel.appendChild(imageWrapper);
-        tabpanel.appendChild(contentWrapper);
       }
+
+      // Move all remaining children to content wrapper, excluding the heading
+      const children = Array.from(tabpanel.children);
+      children.forEach((child) => {
+        if (child !== tab && child !== imageWrapper) {
+          contentWrapper.appendChild(child);
+        }
+      });
+
+      // Clear tabpanel and add wrappers back
+      tabpanel.innerHTML = '';
+      if (imageWrapper) {
+        tabpanel.appendChild(imageWrapper);
+        tabpanel.classList.remove('no-image');
+      } else {
+        tabpanel.classList.add('no-image');
+      }
+      tabpanel.appendChild(contentWrapper);
     }
     
     tabpanel.className = 'tabs-panel';
@@ -97,7 +95,7 @@ export default async function decorate(block) {
     button.className = 'tabs-tab';
     button.id = `tab-${id}`;
 
-    button.innerHTML = tab.innerHTML;
+    button.innerHTML = headingContent;
 
     button.setAttribute('aria-controls', id);
     button.setAttribute('aria-selected', !i);

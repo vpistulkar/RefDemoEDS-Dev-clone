@@ -131,6 +131,11 @@
   justify-content: center;
 }
 
+/* When there is no image, let content take full width */
+.tabs.card-style-tab .tabs-panel.no-image .tabs-panel-content {
+  flex: 1 0 auto;
+}
+
 .tabs.card-style-tab .tabs-panel .tabs-panel-content > * {
   margin: 0 0 16px 0;
 }
