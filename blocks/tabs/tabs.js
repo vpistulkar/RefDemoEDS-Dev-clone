@@ -32,7 +32,7 @@ export default async function decorate(block) {
   // Exclude the style variant div from being treated as a tab
   const tabItems = [...block.children]
     .filter((child) => (
-      child && child.firstElementChild && child.firstElementChild.children.length > 0
+      child && child.firstElementChild
     ))
     .map((child) => ({
       tabpanel: child,
