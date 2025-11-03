@@ -116,16 +116,19 @@
 .tabs.card-style-tab .tabs-panel .tabs-panel-image picture img,
 .tabs.card-style-tab .tabs-panel picture img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto; /* keep aspect ratio; do not stretch to panel height */
+  object-fit: contain;
   object-position: center;
+  display: block;
+  padding-top: 60px;
+  padding-bottom: 60px;
 }
 
 .tabs.card-style-tab .tabs-panel .tabs-panel-image p {
   margin: 0;
   width: 100%;
-  height: 100%;
-  display: flex;
+  height: auto; /* allow image height to define wrapper height */
+  display: block;
 }
 
 .tabs.card-style-tab .tabs-panel .tabs-panel-content {
