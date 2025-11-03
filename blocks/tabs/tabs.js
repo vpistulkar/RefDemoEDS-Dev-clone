@@ -111,10 +111,10 @@ export default async function decorate(block) {
         imageWrapper.appendChild(pictureElement);
       }
 
-      // Move all remaining children to content wrapper, excluding the heading
+      // Move all remaining children to content wrapper, excluding the heading and title field
       const children = Array.from(tabpanel.children);
       children.forEach((child) => {
-        if (child !== tab && child !== imageWrapper) {
+        if (child !== tab && child !== imageWrapper && child !== titleEl) {
           contentWrapper.appendChild(child);
         }
       });
@@ -159,14 +159,13 @@ export default async function decorate(block) {
       button.setAttribute('aria-selected', true);
     });
 
-    // Add instrumentation for UE so title is editable on the button
-    if (titleEl) {
-      moveInstrumentation(titleEl, button);
-      // Remove the original title element from the panel content to avoid duplicate rendering
-      titleEl.remove();
-    } else if (button.firstElementChild) {
-      // If the heading element carried instrumentation, strip it after cloning content
+    // Ensure the button itself carries no instrumentation so it doesn't show as a separate item in UE
+    if (button.firstElementChild) {
       moveInstrumentation(button.firstElementChild, null);
+    }
+    // Hide the authored title field inside the panel (kept for editing within the tab item)
+    if (titleEl) {
+      titleEl.style.display = 'none';
     }
 
     // add the new tab list button, to the tablist

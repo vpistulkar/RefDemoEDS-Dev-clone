@@ -107,7 +107,7 @@
 
 .tabs.card-style-tab .tabs-panel .tabs-panel-image,
 .tabs.card-style-tab .tabs-panel picture {
-  flex: 0 0 50%;
+ /*flex: 0 0 50%;*/
   display: flex;
   overflow: hidden;
 }
