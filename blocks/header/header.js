@@ -370,7 +370,7 @@ async function applyCFTheme(themeCFReference) {
           body: JSON.stringify({
             graphQLPath: `${aempublishurl}${CONFIG.GRAPHQL_QUERY}`,
             cfPath: decodedThemeCFReference,
-            variation: "master"
+            variation: `master;ts=${Date.now()}`
           })
         };
 
