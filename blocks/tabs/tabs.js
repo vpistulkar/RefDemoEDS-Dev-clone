@@ -43,8 +43,10 @@ export default async function decorate(block) {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
     const { tabpanel, heading: tab } = item;
     
-    // Store heading content before any DOM manipulation
-    const headingContent = tab.innerHTML;
+    // Prefer explicit title field from authoring if available
+    const titleEl = tabpanel.querySelector('p[data-aue-prop="title"]');
+    // Store title/heading content before any DOM manipulation
+    const headingContent = (titleEl ? titleEl.innerHTML : tab.innerHTML);
     
     // For card-style-tab variant, reorganize content first
     if (cardStyleVariant) {
@@ -113,16 +115,24 @@ export default async function decorate(block) {
       button.setAttribute('aria-selected', true);
     });
 
+    // Add instrumentation for UE so title is editable on the button
+    if (titleEl) {
+      moveInstrumentation(titleEl, button);
+      // Remove the original title element from the panel content to avoid duplicate rendering
+      titleEl.remove();
+    } else if (button.firstElementChild) {
+      // If the heading element carried instrumentation, strip it after cloning content
+      moveInstrumentation(button.firstElementChild, null);
+    }
+
     // add the new tab list button, to the tablist
     tablist.append(button);
 
-    // remove the tab heading from the dom, which also removes it from the UE tree
-    tab.remove();
-
-    // remove the instrumentation from the button's h1, h2 etc (this removes it from the tree)
-    if (button.firstElementChild) {
-      moveInstrumentation(button.firstElementChild, null);
+    // remove the tab heading element from the panel
+    if (tab && tab.parentElement === tabpanel) {
+      tab.remove();
     }
+
   });
 
   block.prepend(tablist);
