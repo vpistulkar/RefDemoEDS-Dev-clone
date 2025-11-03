@@ -14,6 +14,23 @@ export default async function decorate(block) {
     block.classList.add(tabsStyle);
   }
   
+  // Fallback for Live where style may be a plain <p> row like "card-style-tab"
+  if (!block.classList.contains('card-style-tab')) {
+    const knownStyles = new Set(['card-style-tab']);
+    const styleContainerFallback = [...block.children].find((child) => (
+      [...child.querySelectorAll('p')].some((p) => knownStyles.has(p.textContent?.trim()))
+    ));
+    if (styleContainerFallback) {
+      const detected = [...styleContainerFallback.querySelectorAll('p')]
+        .map((p) => p.textContent?.trim())
+        .find((txt) => knownStyles.has(txt));
+      if (detected) {
+        block.classList.add(detected);
+        styleContainerFallback.remove();
+      }
+    }
+  }
+  
   // Proactively remove any style-config node so it doesn't become a tab (UE/Live)
   const styleNodes = block.querySelectorAll('p[data-aue-prop="tabsstyle"]');
   styleNodes.forEach((node) => {
