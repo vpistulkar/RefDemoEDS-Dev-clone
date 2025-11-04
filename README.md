@@ -1,6 +1,6 @@
 # Reference Demo Framework (for AEM EDS)
 
-**A customizable UI experience:**
+** Build your Own Demos for EDS :**
 - Custom Themes (with and without code)
 - Dynamic Media Templates
 - Dynamic Media Open API & native Dynamic Media Blocks
