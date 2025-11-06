@@ -99,16 +99,22 @@ jobs:
             fi
           done
           
-          # Add and commit the restored files (only if there are changes)
+          # Check if restored files need to be committed
           git add .
-          if git diff --cached --quiet; then
-            echo "ℹ️ No changes after merge and restore - nothing to sync"
+          if ! git diff --cached --quiet; then
+            # There are changes to restored files, commit them
+            git commit -m "Restore custom files after template sync" || true
+          fi
+          
+          # Check if there are any actual changes compared to origin/main
+          # This prevents pushing empty commits when only protected files changed
+          if git diff --quiet origin/main HEAD; then
+            echo "ℹ️ No net changes after merge and restore - protected files were the only changes"
+            echo "No sync needed as all changes were in protected files"
             echo "merge_status=no_changes" >> $GITHUB_OUTPUT
             echo "archive_branch=$ARCHIVE_BRANCH" >> $GITHUB_OUTPUT
           else
-            git commit -m "Restore custom files after template sync" || true
-            
-            # Push directly to main
+            # Push directly to main (merge commit exists and has real changes)
             git push origin main
             
             echo "merge_status=success" >> $GITHUB_OUTPUT
@@ -122,7 +128,7 @@ jobs:
           git merge --abort
           
           # Create a new branch for the PR fallback
-          BRANCH_NAME="sync-template-fallback-$(date +%Y%m%d-%H%M%S)"
+          BRANCH_NAME="sync-template-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH_NAME"
           
           # Try merge again but commit with conflicts this time
@@ -206,14 +212,16 @@ jobs:
         echo "- \`fstab.yaml\`" >> $GITHUB_STEP_SUMMARY
         echo "- \`.github/workflows/\`" >> $GITHUB_STEP_SUMMARY
 
-    - name: No changes to sync
+    - name: No net changes to sync
       if: steps.check-updates.outputs.has_updates == 'true' && steps.sync-changes.outputs.merge_status == 'no_changes'
       run: |
-        echo "## ℹ️ No Changes to Sync" >> $GITHUB_STEP_SUMMARY
+        echo "## ℹ️ No Net Changes to Sync" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Commits differ but no file changes detected.**" >> $GITHUB_STEP_SUMMARY
+        echo "**Template has updates but only to protected files.**" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Template and current repository have identical file content." >> $GITHUB_STEP_SUMMARY
+        echo "All changes were in protected files (\`paths.json\`, \`fstab.yaml\`, \`.github/workflows/\`)." >> $GITHUB_STEP_SUMMARY
+        echo "These files are preserved during sync to maintain your customizations." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
         echo "Archive branch created: \`${{ steps.sync-changes.outputs.archive_branch }}\`" >> $GITHUB_STEP_SUMMARY
 
     - name: Fallback PR created notification
