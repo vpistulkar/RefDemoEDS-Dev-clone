@@ -40,16 +40,10 @@ jobs:
     - name: Check for updates
       id: check-updates
       run: |
-        # Get the latest commit from template
-        TEMPLATE_LATEST=$(git rev-parse template/main)
-        CURRENT_LATEST=$(git rev-parse HEAD)
-        
-        echo "Template latest: $TEMPLATE_LATEST"
-        echo "Current latest: $CURRENT_LATEST"
-        
-        if [ "$TEMPLATE_LATEST" != "$CURRENT_LATEST" ]; then
+        git merge-tree $(git merge-base HEAD template/main) HEAD template/main > /tmp/merge_result
+       
+        if [ -s /tmp/merge_result ]; then
           echo "has_updates=true" >> $GITHUB_OUTPUT
-          echo "template_commit=$TEMPLATE_LATEST" >> $GITHUB_OUTPUT
         else
           echo "has_updates=false" >> $GITHUB_OUTPUT
         fi
