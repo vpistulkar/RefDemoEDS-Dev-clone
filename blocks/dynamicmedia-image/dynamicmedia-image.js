@@ -19,10 +19,7 @@ export default async function decorate(block) {
     return;
   }
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
-  // Get DM Url input
-  let dmUrlFromUtils = await getDynamicMediaServerURL();
-
-  let dmUrlEl = dmUrlFromUtils ? null : inputs[2]?.getElementsByTagName("a")[0];
+  let dmUrlEl = inputs[2]?.getElementsByTagName("a")[0];
 
   let rotate = inputs[3]?.textContent?.trim();
   let flip = inputs[4]?.textContent?.trim();
@@ -30,6 +27,11 @@ export default async function decorate(block) {
 
   if(deliveryType != "na" && shouldHide == false){  
       if(deliveryType === 'dm'){
+          // Get DM Url input
+          let dmUrlFromUtils = await getDynamicMediaServerURL();
+          
+          dmUrlEl = dmUrlFromUtils ? null : inputs[2]?.getElementsByTagName("a")[0];
+
           // Ensure S7 is loaded
           if (typeof s7responsiveImage !== 'function') {
             console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
