@@ -23,7 +23,7 @@ export default async function decorate(block) {
 
   let rotate = inputs[3]?.textContent?.trim();
   let flip = inputs[4]?.textContent?.trim();
-  let altText = inputs[6].textContent?.trim();
+  let altText = inputs[6]?.textContent?.trim();
 
   if(deliveryType != "na" && shouldHide == false){  
       if(deliveryType === 'dm'){
