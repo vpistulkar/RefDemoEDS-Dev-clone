@@ -78,6 +78,32 @@ export async function getHostname() {
   }
 }
 
+/**
+ * Fetch the dynamic media server name from placeholder
+ * @description Fetches the dynamic media server URL from placeholder.
+ * @returns {string} The full URL of the dynamic media server with ending slash
+ */
+export async function getDynamicMediaServerURL() {
+  try {
+    const listOfAllPlaceholdersData = await fetchPlaceholders();
+    let dmurl = listOfAllPlaceholdersData?.dmurl;
+
+    if (dmurl) {
+      // Check if protocol is missing and prepend https:// if needed
+      if (!dmurl.startsWith('http://') && !dmurl.startsWith('https://')) {
+        dmurl = `https://${dmurl}`;
+      }
+      // Ensure URL ends with a trailing slash
+      if (!dmurl.endsWith('/')) {
+        dmurl = `${dmurl}/`;
+      }
+      return dmurl;
+    }
+  } catch (error) {
+    console.warn('Error fetching placeholders for dmurl:', error);
+  }
+}
+
 
 /**
  * Get Inherited Page Properties

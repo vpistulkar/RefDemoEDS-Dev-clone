@@ -1,7 +1,10 @@
+import { getDynamicMediaServerURL } from '../../scripts/utils.js';
+
+
 /**
  * @param {HTMLElement} $block
  */
-export default function decorate(block) {
+export default async function decorate(block) {
   console.log(block);
   // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
   const hostname = window.location.hostname;
@@ -16,14 +19,15 @@ export default function decorate(block) {
     return;
   }
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
-  // Get DM Url input
-  let dmUrlEl = inputs[2]?.getElementsByTagName("a")[0];
-  let rotate = inputs[3]?.textContent?.trim();
-  let flip = inputs[4]?.textContent?.trim();
-  let altText = inputs[6].textContent?.trim();
+  let rotate = inputs[2]?.textContent?.trim();
+  let flip = inputs[3]?.textContent?.trim();
+  let altText = inputs[5]?.textContent?.trim();
 
   if(deliveryType != "na" && shouldHide == false){  
       if(deliveryType === 'dm'){
+          // Get DM Url input
+          let dmUrlEl = await getDynamicMediaServerURL();
+        
           // Ensure S7 is loaded
           if (typeof s7responsiveImage !== 'function') {
             console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
@@ -45,10 +49,8 @@ export default function decorate(block) {
         
           // Get imageName from imageSrc expected in the format /content/dam/<...>/<imageName>.<extension>
           let imageName = imageSrc.split("/").pop().split(".")[0];
-        
-          
-          let dmUrl = dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
-        
+          let dmUrl = dmUrlEl || "https://smartimaging.scene7.com/is/image/DynamicMediaNA/";
+                  
           imageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);

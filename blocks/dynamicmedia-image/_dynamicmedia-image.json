@@ -53,16 +53,6 @@
         },
         {
           "condition": {
-            "===": [{ "var": "delivery_Type" }, "dm"]
-          },
-            "component": "text",
-            "name": "dmUrl",
-            "value": "https://smartimaging.scene7.com/is/image/DynamicMediaNA",
-            "label": "Dynamic Media URL",
-            "valueType": "string"
-        },
-        {
-          "condition": {
             "===": [{ "var": "delivery_Type" }, "dm-openapi"]
           },
           "component": "select",

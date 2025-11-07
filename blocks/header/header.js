@@ -302,42 +302,6 @@ const closeSearchOnFocusOut = (e, navTools) => {
   }
 };
 
-let listOfAllPlaceholdersData = [];
-
-
-
-async function makeImageClickableNSettingAltText(placeholderData) {
-    try {
-        const logoImage = document.querySelector('.nav-brand img');
-        const anchor = document.createElement('a');
-        Object.assign(anchor, {
-            href: placeholderData?.logoUrl || 'https://main--universal-demo--adobehols.aem.live/',
-            title: logoImage?.alt,
-        });
-        const picture = document.querySelector('.nav-brand picture');
-        if (picture) anchor.appendChild(picture);
-        const targetElement = document.querySelector('.nav-brand .default-content-wrapper');
-        if (targetElement) {
-            targetElement.appendChild(anchor);
-        }
-    } catch (error) {
-        console.error('Error in makeImageClickableNSettingAltText:', error);
-    }
-}
-
-async function fetchingPlaceholdersData() {
-    try {
-        listOfAllPlaceholdersData = await fetchPlaceholders();
-        await makeImageClickableNSettingAltText(listOfAllPlaceholdersData);
-        return true; // Indicate successful completion
-    } catch (error) {
-        console.error('Error in fetchingPlaceholdersData:', error);
-        listOfAllPlaceholdersData = []; // Set default value on error
-        return false; // Indicate failure
-    }
-}
-
-
 async function addLogoLink(langCode) {
 
   //urn:aemconnection:/content/wknd-universal/language-masters/en/magazine/jcr:content
@@ -378,14 +342,12 @@ async function addLogoLink(langCode) {
 async function applyCFTheme(themeCFReference) {
    if (!themeCFReference) return;
   
-  // Configuration
   const CONFIG = {
-    WRAPPER_SERVICE_URL: 'https://prod-60.eastus2.logic.azure.com:443/workflows/94ef4cd1fc1243e08aeab8ae74bc7980/triggers/manual/paths/invoke',
-    WRAPPER_SERVICE_PARAMS: 'api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=e81iCCcESEf9NzzxLvbfMGPmredbADtTZSs8mspUTa4',
+    WRAPPER_SERVICE_URL: 'https://3635370-refdemoapigateway-stage.adobeioruntime.net/api/v1/web/ref-demo-api-gateway/fetch-cf',
     GRAPHQL_QUERY: '/graphql/execute.json/ref-demo-eds/BrandThemeByPath',
     EXCLUDED_THEME_KEYS: new Set(['brandSite', 'brandLogo'])
   };
-  
+
   try {
     const decodedThemeCFReference = decodeURIComponent(themeCFReference);
     const hostnameFromPlaceholders = await getHostname();
@@ -402,13 +364,13 @@ async function applyCFTheme(themeCFReference) {
           headers: { 'Content-Type': 'application/json' }
         }
       : {
-          url: `${CONFIG.WRAPPER_SERVICE_URL}?${CONFIG.WRAPPER_SERVICE_PARAMS}`,
+          url: `${CONFIG.WRAPPER_SERVICE_URL}`,
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             graphQLPath: `${aempublishurl}${CONFIG.GRAPHQL_QUERY}`,
             cfPath: decodedThemeCFReference,
-            variation: "master"
+            variation: `master;ts=${Date.now()}`
           })
         };
 
