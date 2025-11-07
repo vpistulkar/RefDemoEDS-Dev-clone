@@ -19,8 +19,8 @@ export default async function decorate(block) {
     return;
   }
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
-  let rotate = inputs[3]?.textContent?.trim();
-  let flip = inputs[4]?.textContent?.trim();
+  let rotate = inputs[2]?.textContent?.trim();
+  let flip = inputs[3]?.textContent?.trim();
   let altText = inputs[5]?.textContent?.trim();
 
   if(deliveryType != "na" && shouldHide == false){  
