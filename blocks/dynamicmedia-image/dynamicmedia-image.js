@@ -19,19 +19,15 @@ export default async function decorate(block) {
     return;
   }
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
-  let dmUrlEl = inputs[2]?.getElementsByTagName("a")[0];
-
-  let rotate = inputs[3]?.textContent?.trim();
-  let flip = inputs[4]?.textContent?.trim();
-  let altText = inputs[6].textContent?.trim();
+  let rotate = inputs[2]?.textContent?.trim();
+  let flip = inputs[3]?.textContent?.trim();
+  let altText = inputs[5]?.textContent?.trim();
 
   if(deliveryType != "na" && shouldHide == false){  
       if(deliveryType === 'dm'){
           // Get DM Url input
-          let dmUrlFromUtils = await getDynamicMediaServerURL();
-          
-          dmUrlEl = dmUrlFromUtils ? null : inputs[2]?.getElementsByTagName("a")[0];
-
+          let dmUrlEl = await getDynamicMediaServerURL();
+        
           // Ensure S7 is loaded
           if (typeof s7responsiveImage !== 'function') {
             console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
@@ -53,7 +49,7 @@ export default async function decorate(block) {
         
           // Get imageName from imageSrc expected in the format /content/dam/<...>/<imageName>.<extension>
           let imageName = imageSrc.split("/").pop().split(".")[0];
-          let dmUrl = dmUrlFromUtils || dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
+          let dmUrl = dmUrlEl || "https://smartimaging.scene7.com/is/image/DynamicMediaNA/";
                   
           imageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
