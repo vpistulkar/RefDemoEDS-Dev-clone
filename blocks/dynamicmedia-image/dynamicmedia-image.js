@@ -21,6 +21,7 @@ export default async function decorate(block) {
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
   let rotate = inputs[2]?.textContent?.trim();
   let flip = inputs[3]?.textContent?.trim();
+  let crop = inputs[4]?.textContent?.trim();
   let altText = inputs[5]?.textContent?.trim();
 
   if(deliveryType != "na" && shouldHide == false){  
@@ -63,18 +64,41 @@ export default async function decorate(block) {
           //dmUrlEl.remove();
       }
       if(deliveryType === 'dm-openapi'){
+        block.children[6]?.remove();
+        block.children[5]?.remove();
+        block.children[4]?.remove();
+        block.children[3]?.remove();
+        block.children[2]?.remove();  
+        block.children[0]?.remove(); 
 
-          //block.children[1].querySelectorAll('picture > img')[0];
-        
-          block.children[6]?.remove();
-          block.children[5]?.remove();
-          block.children[4]?.remove();
-          block.children[3]?.remove();
-          block.children[2]?.remove();  
-          block.children[0]?.remove();       
+        // Build OpenAPI delivery URL from authored values and render <img>
+        const assetLink = inputs[1]?.querySelector('a');
+        const baseUrl = assetLink?.href?.split('?')[0];
+
+        if (!baseUrl) {
+          console.error("OpenAPI delivery URL not found. Ensure the DM delivery repository asset is selected.");
+          return;
+        }
+
+        const params = new URLSearchParams();
+        params.set('width', '1400');
+        params.set('quality', '85');
+        if (rotate && rotate.toLowerCase() !== 'none') params.set('rotate', rotate);
+        if (flip) params.set('flip', flip.toLowerCase());
+        if (crop) params.set('crop', crop.toLowerCase());
+
+        const finalUrl = `${baseUrl}?${params.toString()}`;
+
+        const img = document.createElement('img');
+        img.setAttribute('src', finalUrl);
+        img.setAttribute('alt', altFromAuthor || 'dynamic media image');
+        img.setAttribute('loading', 'lazy');
+
+        block.innerHTML = '';
+        block.appendChild(img);
       }
       
-  }else{
+  } else{
     block.innerHTML = '';
   }
 }
