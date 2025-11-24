@@ -244,3 +244,4 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "No updates available from template repository." >> $GITHUB_STEP_SUMMARY
         echo "Current repository is already in sync with template." >> $GITHUB_STEP_SUMMARY
+
