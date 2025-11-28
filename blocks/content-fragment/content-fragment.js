@@ -153,7 +153,7 @@ export default async function decorate(block) {
             if (isAuthor) {
               ctaHref = authorUrl || (pathOnly ? `${aemauthorurl || ''}${pathOnly}` : '#');
             } else {
-              ctaHref = publishUrl || (pathOnly ? `${aempublishurl || ''}${pathOnly}` : '#');
+              ctaHref = pathOnly;
             }
           }
         }
