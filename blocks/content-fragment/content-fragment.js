@@ -1,6 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { isAuthorEnvironment, moveInstrumentation } from '../../scripts/scripts.js';
-import { getHostname } from '../../scripts/utils.js';
+import { getHostname, mapAemPathToSitePath } from '../../scripts/utils.js';
 import { readBlockConfig } from '../../scripts/aem.js';
 
 /**
@@ -155,6 +155,24 @@ export default async function decorate(block) {
             } else {
               ctaHref = pathOnly;
             }
+          }
+        }
+
+        // Map content paths to site-relative paths using paths.json on live
+        if (!isAuthor) {
+          try {
+            let candidate = ctaHref;
+            if (/^https?:\/\//i.test(candidate)) {
+              const u = new URL(candidate);
+              candidate = u.pathname;
+            }
+            if (candidate && candidate.startsWith('/content/')) {
+              const mapped = await mapAemPathToSitePath(candidate);
+              if (mapped) ctaHref = mapped;
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn('Failed to map CTA via paths.json', e);
           }
         }
 
