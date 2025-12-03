@@ -91,6 +91,17 @@ export default function decorate(block) {
     moveInstrumentation(img, optimizedPic.querySelector('img'));
     img.closest('picture').replaceWith(optimizedPic);
   });
+
+  // Accessibility: normalize overly-deep headings inside cards to h3
+  // This prevents h5/h6 (and h4) from breaking sequential heading order.
+  slider.querySelectorAll('h4,h5,h6').forEach((oldH) => {
+    const h = document.createElement('h3');
+    // copy attributes
+    [...oldH.attributes].forEach((attr) => h.setAttribute(attr.name, attr.value));
+    h.innerHTML = oldH.innerHTML;
+    oldH.replaceWith(h);
+  });
+
   block.textContent = '';
   block.parentNode.parentNode.prepend(leftContent);
   block.append(slider);
