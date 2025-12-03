@@ -136,7 +136,7 @@ export default async function decorate(block) {
           bannerContentStyle = 'background-image: url('+imgUrl+');';
         }  else {
           // Default layout: image as background with gradient overlay (original behavior)
-          bannerDetailStyle = 'background-image: linear-gradient(90deg,rgba(0,0,0,0.72), rgba(0,0,0,0.24) 80%) ,url('+imgUrl+');';
+          bannerDetailStyle = 'background-image: linear-gradient(90deg,rgba(0,0,0,0.6), rgba(0,0,0,0.1) 80%) ,url('+imgUrl+');';
         }
 
       block.innerHTML = `<div class='banner-content block ${displayStyle}' data-aue-resource=${itemId} data-aue-label=${variationname ||"Elements"} data-aue-type="reference" data-aue-filter="contentfragment" style="${bannerContentStyle}">

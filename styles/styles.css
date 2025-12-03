@@ -536,12 +536,6 @@ a.button:focus::after {
   color: var(--link-hover-color);
 }
 
-/* Minimal global focus indicator for keyboard users */
-:focus-visible {
-  outline: 3px solid var(--main-accent-color);
-  outline-offset: 2px;
-}
-
 button:disabled,
 button:disabled:hover {
   color: var(--text-disabled);

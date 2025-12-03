@@ -92,14 +92,13 @@ export default function decorate(block) {
     img.closest('picture').replaceWith(optimizedPic);
   });
 
-  // Accessibility: normalize overly-deep headings inside cards to h3
-  // This prevents h5/h6 (and h4) from breaking sequential heading order.
-  slider.querySelectorAll('h4,h5,h6').forEach((oldH) => {
-    const h = document.createElement('h3');
-    // copy attributes
-    [...oldH.attributes].forEach((attr) => h.setAttribute(attr.name, attr.value));
-    h.innerHTML = oldH.innerHTML;
-    oldH.replaceWith(h);
+  // Accessibility: preserve visual style but expose proper heading level to AT
+  // Use aria-level so we don't change font sizes. Default to level 3, or infer from data-heading-level on the block.
+  const base = parseInt(block?.dataset?.headingLevel, 10);
+  const ariaLevel = Number.isFinite(base) ? Math.min(Math.max(base, 1) + 1, 6) : 3;
+  slider.querySelectorAll('h4,h5,h6').forEach((node) => {
+    node.setAttribute('role', 'heading');
+    node.setAttribute('aria-level', String(ariaLevel));
   });
 
   block.textContent = '';
