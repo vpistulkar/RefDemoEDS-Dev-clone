@@ -136,13 +136,13 @@ export default async function decorate(block) {
           bannerContentStyle = 'background-image: url('+imgUrl+');';
         }  else {
           // Default layout: image as background with gradient overlay (original behavior)
-          bannerDetailStyle = 'background-image: linear-gradient(90deg,rgba(0,0,0,0.6), rgba(0,0,0,0.1) 80%) ,url('+imgUrl+');';
+          bannerDetailStyle = 'background-image: linear-gradient(90deg,rgba(0,0,0,0.72), rgba(0,0,0,0.24) 80%) ,url('+imgUrl+');';
         }
 
       block.innerHTML = `<div class='banner-content block ${displayStyle}' data-aue-resource=${itemId} data-aue-label=${variationname ||"Elements"} data-aue-type="reference" data-aue-filter="contentfragment" style="${bannerContentStyle}">
           <div class='banner-detail ${alignment}' style="${bannerDetailStyle}" data-aue-prop="bannerimage" data-aue-label="Main Image" data-aue-type="media" >
-                <p data-aue-prop="title" data-aue-label="Title" data-aue-type="text" class='cftitle'>${cfReq?.title}</p>
-                <p data-aue-prop="subtitle" data-aue-label="SubTitle" data-aue-type="text" class='cfsubtitle'>${cfReq?.subtitle}</p>
+                <h2 data-aue-prop="title" data-aue-label="Title" data-aue-type="text" class='cftitle'>${cfReq?.title}</h2>
+                <h3 data-aue-prop="subtitle" data-aue-label="SubTitle" data-aue-type="text" class='cfsubtitle'>${cfReq?.subtitle}</h3>
                 
                 <div data-aue-prop="description" data-aue-label="Description" data-aue-type="richtext" class='cfdescription'><p>${cfReq?.description?.plaintext || ''}</p></div>
                  <p class="button-container ${ctaStyle}">
