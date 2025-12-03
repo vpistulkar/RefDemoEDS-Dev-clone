@@ -28,6 +28,22 @@ import {
   getHostname
 } from './utils.js';
 
+function addPreconnect(origin) {
+  try {
+    if (!origin) return;
+    const href = String(origin);
+    if (!href.startsWith('http')) return;
+    if (document.querySelector(`link[rel="preconnect"][href="${href}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = href;
+    link.crossOrigin = '';
+    document.head.appendChild(link);
+  } catch (e) {
+    /* noop */
+  }
+}
+
 
 /**
  * Moves all the attributes from a given elmenet to another given element.
@@ -220,6 +236,17 @@ async function renderWBDataLayer() {
  */
 async function loadEager(doc) {
   setPageLanguage();
+  // Preconnect dynamically to speed up LCP fetch without hardcoding hosts
+  try {
+    addPreconnect(window.location.origin);
+    const lcpImg = doc.querySelector('main img');
+    if (lcpImg?.src) {
+      const u = new URL(lcpImg.src, window.location.href);
+      addPreconnect(u.origin);
+    }
+  } catch (e) {
+    // ignore
+  }
   decorateTemplateAndTheme();
   renderWBDataLayer();
   const main = doc.querySelector('main');
