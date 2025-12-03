@@ -387,7 +387,7 @@ export function decorateDMImages(main) {
         let rotate = '';
         let flip = '';
         let crop = '';
-        if(blockBeingDecorated){
+        if(blockBeingDecorated && blockBeingDecorated.classList){
             blockName = Array.from(blockBeingDecorated.classList).find(className => className !== 'block');
         }
        const videoExtensions = ['.mp4', '.mov', '.avi', '.webm', '.ogg', '.m4v', '.mkv'];
