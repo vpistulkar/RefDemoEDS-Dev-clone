@@ -91,6 +91,16 @@ export default function decorate(block) {
     moveInstrumentation(img, optimizedPic.querySelector('img'));
     img.closest('picture').replaceWith(optimizedPic);
   });
+
+  // Accessibility: preserve visual style but expose proper heading level to AT
+  // Use aria-level so we don't change font sizes. Default to level 3, or infer from data-heading-level on the block.
+  const base = parseInt(block?.dataset?.headingLevel, 10);
+  const ariaLevel = Number.isFinite(base) ? Math.min(Math.max(base, 1) + 1, 6) : 3;
+  slider.querySelectorAll('h4,h5,h6').forEach((node) => {
+    node.setAttribute('role', 'heading');
+    node.setAttribute('aria-level', String(ariaLevel));
+  });
+
   block.textContent = '';
   block.parentNode.parentNode.prepend(leftContent);
   block.append(slider);
