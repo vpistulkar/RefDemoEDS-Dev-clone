@@ -1,7 +1,10 @@
+import { getDynamicMediaServerURL } from '../../scripts/utils.js';
+
+
 /**
  * @param {HTMLElement} $block
  */
-export default function decorate(block) {
+export default async function decorate(block) {
   console.log(block);
   // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
   const hostname = window.location.hostname;
@@ -16,14 +19,16 @@ export default function decorate(block) {
     return;
   }
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
-  // Get DM Url input
-  let dmUrlEl = inputs[2]?.getElementsByTagName("a")[0];
-  let rotate = inputs[3]?.textContent?.trim();
-  let flip = inputs[4]?.textContent?.trim();
-  let altText = inputs[6].textContent?.trim();
+  let rotate = inputs[2]?.textContent?.trim();
+  let flip = inputs[3]?.textContent?.trim();
+  let crop = inputs[4]?.textContent?.trim();
+  let altText = inputs[5]?.textContent?.trim();
 
-  if(deliveryType != "na" && shouldHide == false){  
+  if(deliveryType != "na"){  
       if(deliveryType === 'dm'){
+          // Get DM Url input
+          let dmUrlEl = await getDynamicMediaServerURL();
+        
           // Ensure S7 is loaded
           if (typeof s7responsiveImage !== 'function') {
             console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
@@ -45,10 +50,8 @@ export default function decorate(block) {
         
           // Get imageName from imageSrc expected in the format /content/dam/<...>/<imageName>.<extension>
           let imageName = imageSrc.split("/").pop().split(".")[0];
-        
-          
-          let dmUrl = dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
-        
+          let dmUrl = dmUrlEl || "https://smartimaging.scene7.com/is/image/DynamicMediaNA/";
+                  
           imageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
@@ -61,18 +64,61 @@ export default function decorate(block) {
           //dmUrlEl.remove();
       }
       if(deliveryType === 'dm-openapi'){
+        block.children[6]?.remove();
+        block.children[5]?.remove();
+        block.children[4]?.remove();
+        block.children[3]?.remove();
+        block.children[2]?.remove();  
+        block.children[0]?.remove(); 
 
-          //block.children[1].querySelectorAll('picture > img')[0];
-        
-          block.children[6]?.remove();
-          block.children[5]?.remove();
-          block.children[4]?.remove();
-          block.children[3]?.remove();
-          block.children[2]?.remove();  
-          block.children[0]?.remove();       
+        // Build OpenAPI delivery URL from authored values and render <img>
+        // Prefer authored link; fallback to picture/source/img produced earlier
+        const assetLink = inputs[1]?.querySelector('a[href]');
+        let baseUrl = assetLink?.href?.split('?')[0];
+        if (!baseUrl) {
+          const sourceEl = inputs[1]?.querySelector('picture source[srcset]');
+          const srcset = sourceEl?.getAttribute('srcset') || '';
+          if (srcset) {
+            const firstSrc = srcset.split(',')[0].trim();
+            baseUrl = firstSrc.split('?')[0];
+          }
+        }
+        if (!baseUrl) {
+          const imgEl2 = inputs[1]?.querySelector('picture img[src], img[src]');
+          const imgSrc = imgEl2?.getAttribute('src') || '';
+          if (imgSrc) {
+            baseUrl = imgSrc.split('?')[0];
+          }
+        }
+        const rotationVal = inputs[2]?.textContent?.trim();
+        const flipVal = inputs[3]?.textContent?.trim();
+        const cropVal = inputs[4]?.textContent?.trim();
+        const altFromAuthor = inputs[5]?.textContent?.trim();
+
+        if (!baseUrl) {
+          console.error("OpenAPI delivery URL not found. Ensure the DM delivery repository asset is selected.");
+          return;
+        }
+
+        const params = new URLSearchParams();
+        params.set('width', '1400');
+        params.set('quality', '85');
+        if (rotationVal && rotationVal.toLowerCase() !== 'none') params.set('rotate', rotationVal);
+        if (flipVal) params.set('flip', flipVal.toLowerCase());
+        if (cropVal) params.set('crop', cropVal.toLowerCase());
+
+        const finalUrl = `${baseUrl}?${params.toString()}`;
+
+        const img = document.createElement('img');
+        img.setAttribute('src', finalUrl);
+        img.setAttribute('alt', altFromAuthor || 'dynamic media image');
+        img.setAttribute('loading', 'lazy');
+
+        block.innerHTML = '';
+        block.appendChild(img);
       }
       
-  }else{
+  } else{
     block.innerHTML = '';
   }
 }

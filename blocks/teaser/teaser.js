@@ -1,6 +1,6 @@
 import {
   div, a, span, img, video, source, button,
-  h1,
+  h2,
 } from '../../scripts/dom-helpers.js';
 import { readBlockConfig } from '../../scripts/aem.js';
 
@@ -145,7 +145,7 @@ export default function decorate(block) {
         img({ class: 'swoosh second', src: swooshSecond, alt: 'background swoosh second' }),
       ),
       div({ class: 'teaser-title-wrapper' },
-        h1({ class: 'teaser-title' }),
+        h2({ class: 'teaser-title' }),
         div({ class: buttonContainerClass },
           a({ id: 'button', href: buttonLink, class: `button ${buttonStyle}` },
             span({ class: 'button-text' }, buttonText),

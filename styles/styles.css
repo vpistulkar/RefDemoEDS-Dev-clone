@@ -33,10 +33,10 @@
   --link-hover-color: var(--brand-link-hover-color, #F97316);
   --main-accent-color: var(--brand-theme-color, #FB923C);
 
+
   --dark-color-opacity: rgba(0, 0, 0, 0.55);
   --light-color-opacity: rgba(255, 255, 255, 0.5);
   --tab-background-color: rgba(0, 0, 0, 0.02);
-
   /* brand-scoped header/footer variables with sensible defaults */
   --nav-background-color: var(--brand-nav-background-color, #0000008c);
   --nav-text-color: var(--brand-nav-text-color, #ffffff);
@@ -342,6 +342,7 @@ body.green-theme {
 
 .wehealthcare-theme {
   --main-accent-color: #00c4ff;
+  --nav-text-color:#000000;
 }
 /*brand header footer brand themes*/
 body header .nav-wrapper{
@@ -831,6 +832,36 @@ main .section.bg-image > .default-content-wrapper {
   background: #000;
 }
 
+/* Section background image (data-image) */
+main .section.section-has-bg {
+  position: relative;
+  overflow: hidden;
+}
+main .section > picture.section-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+/* disable shine effect on background picture */
+main .section > picture.section-bg::before {
+  content: none;
+}
+main .section > picture.section-bg img.sec-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+main .section.section-has-bg > div {
+  position: relative;
+  z-index: 1;
+}
+@media print {
+  main .section > picture.section-bg { display: none; }
+}
+
 /* Responsive styles- start */
 @media (max-width: 1024px) {
   :root {
@@ -1072,4 +1103,10 @@ table {
 
 .cta-button-dark a.button:active::after {
   transform: translateX(0);
+}
+
+/* Accessibility: darken default accent and hover for better contrast */
+:root {
+  --main-accent-color: #C2410C; /* darker orange for contrast */
+  --link-hover-color: #9A3412;  /* darker hover */
 }
