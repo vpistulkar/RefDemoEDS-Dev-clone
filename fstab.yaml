@@ -1,5 +1,5 @@
 mountpoints:
   /:
-    url: "https://author-p159983-e1710854.adobeaemcloud.com/bin/franklin.delivery/vpistulkar/RefDemoEDS-Dev-clone/main"
+    url: "https://author-p159983-e1710854.adobeaemcloud.com/bin/franklin.delivery/vpistulkar/refdemoeds-vrushali/main"
     type: "markup"
     suffix: ".html"
