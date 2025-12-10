@@ -272,8 +272,8 @@ export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
-  decorateDMImages(main);
   decorateBlocks(main);
+  decorateDMImages(main);
 }
 
 
